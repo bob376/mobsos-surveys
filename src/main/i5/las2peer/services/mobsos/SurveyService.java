@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package i5.las2peer.services.mobsos;
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
-import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
 import i5.las2peer.api.Service;
 import i5.las2peer.restMapper.HttpResponse;
 import i5.las2peer.restMapper.MediaType;
@@ -42,7 +41,6 @@ import i5.las2peer.restMapper.annotations.ContentParam;
 import i5.las2peer.restMapper.annotations.DELETE;
 import i5.las2peer.restMapper.annotations.GET;
 import i5.las2peer.restMapper.annotations.HeaderParam;
-import i5.las2peer.restMapper.annotations.HttpHeaders;
 import i5.las2peer.restMapper.annotations.POST;
 import i5.las2peer.restMapper.annotations.PUT;
 import i5.las2peer.restMapper.annotations.Path;
@@ -50,7 +48,6 @@ import i5.las2peer.restMapper.annotations.PathParam;
 import i5.las2peer.restMapper.annotations.Produces;
 import i5.las2peer.restMapper.annotations.QueryParam;
 import i5.las2peer.restMapper.annotations.Version;
-import i5.las2peer.security.Context;
 import i5.las2peer.security.GroupAgent;
 import i5.las2peer.security.UserAgent;
 
@@ -72,7 +69,6 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -96,9 +92,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.bouncycastle.crypto.digests.MD5Digest;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -110,8 +104,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
-
-import com.mysql.jdbc.EscapeTokenizer;
 
 /**
  * 
@@ -189,7 +181,7 @@ public class SurveyService extends Service {
 		// only respond with template; nothing to be adapted
 		try {
 			// load template
-			String html = new Scanner(new File("./etc/html/questionnaires-template.html")).useDelimiter("\\A").next();
+			String html = new Scanner(new File("./etc/html/questionnaires-template-relative.html")).useDelimiter("\\A").next();
 
 			// localize template
 			html = i18n(html, lang);
@@ -261,11 +253,14 @@ public class SurveyService extends Service {
 				while(rs.next()){
 					if(full>0){
 						JSONObject questionnaire = readQuestionnaireFromResultSet(rs);
-						questionnaire.put("url", epUrl + "mobsos-surveys/questionnaires/" + questionnaire.get("id"));
+						
+						//questionnaire.put("url", epUrl + "mobsos-surveys/questionnaires/" + questionnaire.get("id"));
+						questionnaire.put("url", "./questionnaires/" + questionnaire.get("id"));
 						qs.add(questionnaire);	
 					} else {
 						String id = rs.getString("id");
-						qs.add(epUrl + "mobsos-surveys/questionnaires/" + id);
+						//qs.add(epUrl + "mobsos-surveys/questionnaires/" + id);
+						qs.add("./questionnaires/" + id);
 					}
 				}
 
@@ -2162,7 +2157,7 @@ public class SurveyService extends Service {
 		String html = "";
 		// start off with template
 		try {
-			html = new Scanner(new File("./etc/html/index.html")).useDelimiter("\\A").next();
+			html = new Scanner(new File("./etc/html/index-relative.html")).useDelimiter("\\A").next();
 		} catch (FileNotFoundException e) {
 			return internalError(onAction);
 		}
