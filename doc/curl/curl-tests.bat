@@ -27,6 +27,13 @@ set ep=http://localhost:8080/mobsos-surveys
 :: las2peer user credentials to be used in subsequent curl commandlines
 set cred=-9147513385456075294:userAPass
 
+:: ***************** SWAGGER API DOC RESOURCE ********************
+
+cls
+curl -v -X GET %ep%/api-docs -H "Accept: application/json"
+echo "**** %ep_name% - GET SWAGGER API DOCS (JSON/NO AUTH)"
+pause
+
 :: ***************** QUESTIONNAIRE RESOURCES *********************
 
 cls
